@@ -226,19 +226,45 @@ int main(int argc, const char* argv[])
 
                 break;
             case OP_LDR:
-                {LDR, 7}
+                /* LDR */
+                {
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    uint16_t r1 = (instr >> 6) & 0x7;
+                    uint16_t offset6 = sign_extend(instr & 0x3f, 6);
+                    reg[r0] = mem_read(reg[r1] + offset6);
+                    update_flags(r0);
+                }
                 break;
             case OP_LEA:
-                {LEA, 7}
+                /* LEA */
+                {
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    uint16_t pc_offset = sign_extend(instr & 0x1ff, 9);
+                    reg[r0] = reg[R_PC] + pc_offset;
+                    update_flags(r0);
+                }
                 break;
             case OP_ST:
-                {ST, 7}
+                {
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    uint16_t pc_offset = sign_extend(instr & 0x1ff, 9);
+                    mem_write(reg[R_PC] + pc_offset, reg[r0]);
+                }
                 break;
             case OP_STI:
-                {STI, 7}
+                {
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    uint16_t pc_offset = sign_extend(instr & 0x1ff, 9);
+                    mem_write(mem_read(reg[R_PC] + pc_offset), reg[r0]);
+                }
                 break;
             case OP_STR:
-                {STR, 7}
+                {
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    uint16_t r1 = (instr >> 6) & 0x7;
+                    uint16_t offset = sign_extend(instr & 0x3f, 6);
+                    mem_write(mem_read(reg[r1] + offset), reg[r0]);
+                }
                 break;
             case OP_TRAP:
                 {TRAP, 8}
@@ -246,7 +272,8 @@ int main(int argc, const char* argv[])
             case OP_RES:
             case OP_RTI:
             default:
-                {BAD OPCODE, 7}
+                /* BAD OPCODE */
+                abort();
                 break;
         }
     }
