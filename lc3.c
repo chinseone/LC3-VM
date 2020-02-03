@@ -132,7 +132,7 @@ int main(int argc, const char* argv[])
             case OP_AND:
                 /* AND */
                 {
-                    /* Destination register (DR) */
+                    /* destination register (DR) */
                     uint16_t r0 = (instr >> 9) & 0x7;
                     /* first operand (SR1) */
                     uint16_t r1 = (instr >> 8) & 0x7;
@@ -154,7 +154,17 @@ int main(int argc, const char* argv[])
                 }
                 break;
             case OP_NOT:
-                {NOT, 7}
+                /* NOT */
+                {
+                    /* destination register (DR) */
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    /* first operand (SR) */
+                    uint16_t r1 = (instr >> 6) & 0x7;
+
+                    reg[r0] = ~reg[r1];
+
+                    update_flags(r0);
+                }
                 break;
             case OP_BR:
                 {BR, 7}
