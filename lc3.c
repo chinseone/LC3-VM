@@ -187,10 +187,30 @@ int main(int argc, const char* argv[])
                 }
                 break;
             case OP_JSR:
-                {JSR, 7}
+                /* JSR */
+                {
+                    reg[R_R7] = reg[R_PC];
+                    uint16_t cond = (instr >> 11) & 0x1;
+                    if (cond)
+                    {
+                        uint16_t pc_offset = sign_extend(instr & 0x7ff, 11);
+                        reg[R_PC] += pc_offset; /* JSR */
+                    }
+                    else
+                    {
+                        uint16_t r1 = (instr >> 6) & 0x7;
+                        reg[R_PC] = reg[r1]; /* JSRR */
+                    }
+                }
                 break;
             case OP_LD:
-                {LD, 7}
+                /* LD */
+                {
+                    uint16_t r0 = (instr >> 9) & 0x7;
+                    uint16_t pc_offset = sign_extend(instr & 0x1ff, 9);
+                    reg[r0] = mem_read(reg[R_PC] + pc_offset);
+                    update_flags(r0);
+                }
                 break;
             case OP_LDI:
                 /* LDI */
