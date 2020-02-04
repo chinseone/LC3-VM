@@ -69,6 +69,12 @@ enum
     TRAP_HALT = 0x25   /* halt the program */
 };
 
+enum
+{
+    MR_KBSR = 0xFE00, /* keyboard status */
+    MR_KBDR = 0xFE02  /* keyboard data */
+};
+
 /* Memory Storage */
 /* 65536 locations */
 uint16_t memory[UINT16_MAX];
